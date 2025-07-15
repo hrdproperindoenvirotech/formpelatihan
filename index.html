@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Form Pelatihan & Sertifikasi</title>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: auto; }
+    label, select, input, textarea { display: block; margin: 6px 0; width: 100%; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h1>Form Pelatihan & Sertifikasi</h1>
+
+  <label for="jenis">Jenis:</label>
+  <select id="jenis" name="jenis" required>
+    <option value="">-- Pilih jenis --</option>
+    <option value="Pelatihan Dana Individu">Pelatihan Dana Individu</option>
+    <option value="Pelatihan Dana Divisi">Pelatihan Dana Divisi</option>
+    <option value="Sertifikasi Dana Divisi">Sertifikasi Dana Divisi</option>
+    <option value="Pelatihan dan Sertifikasi Dana Divisi">Pelatihan dan Sertifikasi Dana Divisi</option>
+  </select>
+
+  <label>NIP: <input type="text" id="nip" required />
+    <button id="cekNip" type="button">Cek NIP</button>
+  </label>
+
+  <div id="infoPribadi" class="hidden">
+    <label>Nama: <input type="text" id="nama" readonly></label>
+    <label>Email: <input type="email" id="email" readonly></label>
+    <label>Divisi: <input type="text" id="divisi" readonly></label>
+    <label>Golongan: <input type="text" id="golongan" readonly></label>
+  </div>
+
+  <form id="formPelatihan" class="hidden">
+    <div id="bagianPelatihan" class="hidden">
+      <label>Judul Pelatihan: <input name="judul_pelatihan"></label>
+    </div>
+
+    <div id="bagianSertifikasi" class="hidden">
+      <label>Judul Sertifikasi: <input name="judul_sertifikasi"></label>
+      <label>Jumlah Peserta: <input type="number" name="jumlah_peserta"></label>
+      <label>Tanggal Habis Sertifikat: <input type="date" name="tgl_habis"></label>
+    </div>
+
+    <label>Tanggal Pelaksanaan: <input name="tanggal" placeholder="YYYY-MM-DD atau rentang"></label>
+    <label>Penyelenggara: <input name="penyelenggara"></label>
+
+    <label>Form Pengajuan: <input type="file" name="form_pengajuan"></label>
+    <label>Form Persetujuan HRD: <input type="file" name="form_hrd"></label>
+    <label>Invoice: <input type="file" name="invoice"></label>
+    <label>Sertifikat (file terpisah untuk sertifikasi): <input type="file" name="sertifikat"></label>
+    <label>Upload Materi: <input type="file" name="materi"></label>
+    <label>Upload Evaluasi: <input type="file" name="evaluasi"></label>
+
+    <label>Tanggal Berlaku Sertifikat: <input type="date" name="tgl_berlaku"></label>
+    <label>Total Jam: <input type="number" name="jam"></label>
+    <label>Harga: <input type="number" name="harga"></label>
+    <label>Rekening (Nama-Bank-Norek): <input type="text" name="rekening"></label>
+
+    <button type="submit">Kirim</button>
+  </form>
+
+  <div id="status"></div>
+
+<script>
+const scriptUrl = "https://script.google.com/macros/s/AKfycbzsPDw1SRUPx3esfSgs2LR3Y9Mh2q92_oUiuWg_s7R5riV92_PtP-uXoJBuktDNrhbmWw/exec";
+
+document.getElementById('cekNip').onclick = async () => {
+  const nip = document.getElementById('nip').value.trim();
+  if (!nip) return alert('Isi NIP dulu.');
+  let res;
+  try {
+    res = await fetch(scriptUrl + '?nip=' + nip);
+    res = await res.json();
+  } catch {
+    return alert('Gagal koneksi');
+  }
+  if (res.error) return alert(res.error);
+  ['nama','email','divisi','golongan'].forEach(f => document.getElementById(f).value = res[f]);
+  document.getElementById('infoPribadi').classList.remove('hidden');
+  document.getElementById('formPelatihan').classList.remove('hidden');
+};
+
+document.getElementById('jenis').onchange = e => {
+  const j = e.target.value;
+  document.getElementById('bagianPelatihan').classList.toggle('hidden', !/Pelatihan/.test(j));
+  document.getElementById('bagianSertifikasi').classList.toggle('hidden', !/Sertifikasi/.test(j));
+};
+
+document.getElementById('formPelatihan').onsubmit = async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  fd.append('jenis', document.getElementById('jenis').value);
+  fd.append('nip', document.getElementById('nip').value);
+  ['nama','email','divisi','golongan'].forEach(f => fd.append(f, document.getElementById(f).value));
+
+  document.getElementById('status').innerText = 'Mengirim...';
+  const rep = await fetch(scriptUrl, { method: 'POST', body: fd });
+  const txt = await rep.text();
+  document.getElementById('status').innerText = txt;
+  if (rep.ok) e.target.reset();
+};
+</script>
+</body>
+</html>
