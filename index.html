@@ -54,7 +54,7 @@
     <label>Upload Evaluasi: <input type="file" name="evaluasi"></label>
 
     <label>Tanggal Berlaku Sertifikat: <input type="date" name="tgl_berlaku"></label>
-    <label>Total Jam: <input type="number" name="jam"></label>
+    <label id="labelJam">Total Jam: <input type="number" name="jam"></label>
     <label>Harga: <input type="number" name="harga"></label>
     <label>Rekening (Nama-Bank-Norek): <input type="text" name="rekening"></label>
 
@@ -84,8 +84,14 @@ document.getElementById('cekNip').onclick = async () => {
 
 document.getElementById('jenis').onchange = e => {
   const j = e.target.value;
-  document.getElementById('bagianPelatihan').classList.toggle('hidden', !/Pelatihan/.test(j));
-  document.getElementById('bagianSertifikasi').classList.toggle('hidden', !/Sertifikasi/.test(j));
+  const isPelatihan = /Pelatihan/.test(j);
+  const isSertifikasi = /Sertifikasi/.test(j);
+
+  document.getElementById('bagianPelatihan').classList.toggle('hidden', !isPelatihan);
+  document.getElementById('bagianSertifikasi').classList.toggle('hidden', !isSertifikasi);
+
+  // Sembunyikan kolom jam jika hanya sertifikasi
+  document.getElementById('labelJam').classList.toggle('hidden', j === 'Sertifikasi Dana Divisi');
 };
 
 document.getElementById('formPelatihan').onsubmit = async e => {
