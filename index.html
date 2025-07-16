@@ -8,7 +8,6 @@
     body {
       font-family: "Segoe UI", sans-serif;
       background-color: #f4f7f9;
-      color: #333;
       margin: 0;
       padding: 0;
     }
@@ -21,10 +20,10 @@
     main {
       max-width: 800px;
       margin: 2rem auto;
-      background-color: white;
+      background: white;
       padding: 2rem;
       border-radius: 8px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
     }
     label {
       display: block;
@@ -42,16 +41,12 @@
     button {
       background-color: #27ae60;
       color: white;
-      border: none;
-      cursor: pointer;
       margin-top: 1.5rem;
+      cursor: pointer;
+      border: none;
     }
-    button:hover {
-      background-color: #219150;
-    }
-    .hidden {
-      display: none;
-    }
+    button:hover { background-color: #219150; }
+    .hidden { display: none; }
     footer {
       text-align: center;
       padding: 1rem;
@@ -63,133 +58,154 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>Form Pelatihan & Sertifikasi</h1>
-  </header>
+<header>
+  <h1>Form Pelatihan & Sertifikasi</h1>
+</header>
 
-  <main>
-    <label for="jenis">Jenis:</label>
-    <select id="jenis" name="jenis" required>
-      <option value="">-- Pilih jenis --</option>
-      <option value="Pelatihan Dana Individu">Pelatihan Dana Individu</option>
-      <option value="Pelatihan Dana Divisi">Pelatihan Dana Divisi</option>
-      <option value="Sertifikasi Dana Divisi">Sertifikasi Dana Divisi</option>
-      <option value="Pelatihan dan Sertifikasi Dana Divisi">Pelatihan dan Sertifikasi Dana Divisi</option>
-    </select>
+<main>
+  <label for="jenis">Jenis:</label>
+  <select id="jenis" required>
+    <option value="">-- Pilih jenis --</option>
+    <option value="Pelatihan Dana Individu">Pelatihan Dana Individu</option>
+    <option value="Pelatihan Dana Divisi">Pelatihan Dana Divisi</option>
+    <option value="Sertifikasi Dana Divisi">Sertifikasi Dana Divisi</option>
+    <option value="Pelatihan dan Sertifikasi Dana Divisi">Pelatihan dan Sertifikasi Dana Divisi</option>
+  </select>
 
-    <label for="nip">NIP:</label>
-    <input type="text" id="nip" required />
-    <button type="button" id="cekNip">Cek NIP</button>
+  <label for="nip">NIP:</label>
+  <input type="text" id="nip" required />
+  <button type="button" id="cekNip">Cek NIP</button>
 
-    <div id="infoPribadi" class="hidden">
-      <label>Nama: <input type="text" id="nama" name="nama" readonly /></label>
-      <label>Email: <input type="email" id="email" name="email" readonly /></label>
-      <label>Divisi: <input type="text" id="divisi" name="divisi" readonly /></label>
-      <label>Golongan: <input type="text" id="golongan" name="golongan" readonly /></label>
+  <div id="infoPribadi" class="hidden">
+    <label>Nama: <input type="text" id="nama" readonly /></label>
+    <label>Email: <input type="email" id="email" readonly /></label>
+    <label>Divisi: <input type="text" id="divisi" readonly /></label>
+    <label>Golongan: <input type="text" id="golongan" readonly /></label>
+  </div>
+
+  <form id="formPelatihan" class="hidden">
+    <div id="bagianPelatihan" class="hidden">
+      <label>Judul Pelatihan: <input name="judul_pelatihan" /></label>
     </div>
 
-    <form id="formPelatihan" class="hidden" method="POST" enctype="multipart/form-data" action="https://script.google.com/macros/s/AKfycbzsPDw1SRUPx3esfSgs2LR3Y9Mh2q92_oUiuWg_s7R5riV92_PtP-uXoJBuktDNrhbmWw/exec" target="hidden_iframe">
-      <input type="hidden" name="jenis" id="hiddenJenis" />
-      <input type="hidden" name="nip" id="hiddenNip" />
+    <div id="bagianSertifikasi" class="hidden">
+      <label>Judul Sertifikasi: <input name="judul_sertifikasi" /></label>
+      <label>Jumlah Peserta: <input type="number" name="jumlah_peserta" /></label>
+      <label>Tanggal Berlaku Sertifikat: <input type="date" name="tgl_berlaku" /></label>
+      <label>Tanggal Habis Masa Berlaku Sertifikat: <input type="date" name="tgl_habis" /></label>
+    </div>
 
-      <div id="bagianPelatihan" class="hidden">
-        <label>Judul Pelatihan: <input name="judul_pelatihan" /></label>
-      </div>
+    <label>Tanggal Pelaksanaan:
+      <input name="tanggal" required
+        placeholder="contoh: 15 Juli 2025 atau 15 Juli 2025 s.d. 18 Juli 2025"
+        pattern="^(\d{1,2})\s(Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember)\s\d{4}(\s+s\.d\.\s+\d{1,2}\s(Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember)\s\d{4})?$" />
+    </label>
 
-      <div id="bagianSertifikasi" class="hidden">
-        <label>Judul Sertifikasi: <input name="judul_sertifikasi" /></label>
-        <label>Jumlah Peserta: <input type="number" name="jumlah_peserta" /></label>
-        <label>Tanggal Berlaku Sertifikat: <input type="date" name="tgl_berlaku" /></label>
-        <label>Tanggal Habis Sertifikat: <input type="date" name="tgl_habis" /></label>
-      </div>
+    <label>Penyelenggara: <input name="penyelenggara" /></label>
 
-      <label>Tanggal Pelaksanaan:
-        <input
-          name="tanggal"
-          placeholder="contoh: 15 Juli 2025 atau 15 Juli 2025 s.d. 18 Juli 2025"
-          pattern="^(\d{1,2})\s(Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember)\s\d{4}(\s+s\.d\.\s+\d{1,2}\s(Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember)\s\d{4})?$"
-          required
-        />
-        <small style="font-size: 0.85em; color: #555;">
-          Format: <strong>15 Juli 2025</strong> atau <strong>15 Juli 2025 s.d. 18 Juli 2025</strong>
-        </small>
-      </label>
+    <label>Upload Form Pengajuan: <input type="file" name="form_pengajuan" /></label>
+    <label>Upload Form Persetujuan HRD: <input type="file" name="form_hrd" /></label>
+    <label>Upload Invoice: <input type="file" name="invoice" /></label>
+    <label>Upload Sertifikat: <input type="file" name="sertifikat" /></label>
+    <label>Upload Materi: <input type="file" name="materi" /></label>
+    <label>Upload Evaluasi: <input type="file" name="evaluasi" /></label>
 
-      <label>Penyelenggara: <input name="penyelenggara" /></label>
+    <label id="labelJam">Total Jam Pelatihan: <input type="number" name="jam" /></label>
+    <label>Harga Pelatihan/Sertifikasi: <input type="number" name="harga" /></label>
+    <label>Nomor Rekening (Nama-Bank-Norek): <input type="text" name="rekening" /></label>
 
-      <label>Upload Form Pengajuan: <input type="file" name="form_pengajuan" /></label>
-      <label>Upload Form Persetujuan HRD: <input type="file" name="form_hrd" /></label>
-      <label>Upload Invoice: <input type="file" name="invoice" /></label>
-      <label>Upload Sertifikat: <input type="file" name="sertifikat" /></label>
-      <label>Upload Materi: <input type="file" name="materi" /></label>
-      <label>Upload Evaluasi: <input type="file" name="evaluasi" /></label>
+    <button type="submit">Kirim</button>
+  </form>
 
-      <label id="labelJam">Total Jam: <input type="number" name="jam" /></label>
-      <label>Harga Pelatihan/Sertifikasi: <input type="number" name="harga" /></label>
-      <label>Nomor Rekening (Nama-Bank-Norek): <input type="text" name="rekening" /></label>
+  <div id="status" style="margin-top: 1rem;"></div>
+</main>
 
-      <button type="submit">Kirim</button>
-    </form>
+<footer>
+  &copy; 2025 HRD PT Properindo Enviro Tech
+</footer>
 
-    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
-    <div id="status" style="margin-top: 1rem; font-weight: bold;"></div>
-  </main>
+<script>
+  const scriptUrl = "https://script.google.com/macros/s/AKfycbzsPDw1SRUPx3esfSgs2LR3Y9Mh2q92_oUiuWg_s7R5riV92_PtP-uXoJBuktDNrhbmWw/exec";
 
-  <footer>
-    &copy; 2025 HRD PT Properindo Enviro Tech
-  </footer>
-
-  <script>
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbzsPDw1SRUPx3esfSgs2LR3Y9Mh2q92_oUiuWg_s7R5riV92_PtP-uXoJBuktDNrhbmWw/exec";
-
-    document.getElementById('cekNip').onclick = async () => {
-      const nip = document.getElementById('nip').value.trim();
-      if (!nip) return alert('Silakan isi NIP.');
-      let res;
-      try {
-        res = await fetch(scriptUrl + '?nip=' + nip);
-        res = await res.json();
-      } catch {
-        return alert('Gagal mengambil data.');
-      }
-      if (res.error) return alert(res.error);
-      ['nama','email','divisi','golongan'].forEach(f => document.getElementById(f).value = res[f]);
-      document.getElementById('infoPribadi').classList.remove('hidden');
-      document.getElementById('formPelatihan').classList.remove('hidden');
-      document.getElementById('hiddenNip').value = nip;
-    };
-
-    document.getElementById('jenis').onchange = e => {
-      const jenis = e.target.value;
-      const isPelatihan = /Pelatihan/.test(jenis);
-      const isSertifikasi = /Sertifikasi/.test(jenis);
-
-      document.getElementById('bagianPelatihan').classList.toggle('hidden', !isPelatihan);
-      document.getElementById('bagianSertifikasi').classList.toggle('hidden', !isSertifikasi);
-      document.getElementById('labelJam').classList.toggle('hidden', jenis === 'Sertifikasi Dana Divisi');
-
-      document.getElementById('hiddenJenis').value = jenis;
-    };
-    
-    // Deteksi submit berhasil dari iframe (silent form)
-    document.getElementById('hidden_iframe').addEventListener('load', function () {
-      const status = document.getElementById('status');
-      status.innerText = '✅ Form berhasil dikirim!';
-      status.style.color = 'green';
-    
-      // Reset form
-      const form = document.getElementById('formPelatihan');
-      form.reset();
-      document.getElementById('jenis').value = "";
-      document.getElementById('formPelatihan').classList.add('hidden');
-      document.getElementById('infoPribadi').classList.add('hidden');
+  const convertFileToBase64 = file =>
+    new Promise((resolve, reject) => {
+      if (!file) return resolve(null);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result.split(",")[1];
+        resolve({
+          name: file.name,
+          mimeType: file.type,
+          data: base64
+        });
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
     });
 
-    document.getElementById('formPelatihan').addEventListener('submit', function() {
-      const status = document.getElementById('status');
-      status.innerText = '⏳ Mengirim data...';
-      status.style.color = '#333';
+  document.getElementById("jenis").onchange = e => {
+    const jenis = e.target.value;
+    const isPelatihan = /Pelatihan/.test(jenis);
+    const isSertifikasi = /Sertifikasi/.test(jenis);
+
+    document.getElementById("bagianPelatihan").classList.toggle("hidden", !isPelatihan);
+    document.getElementById("bagianSertifikasi").classList.toggle("hidden", !isSertifikasi);
+    document.getElementById("labelJam").classList.toggle("hidden", jenis === "Sertifikasi Dana Divisi");
+  };
+
+  document.getElementById("cekNip").onclick = async () => {
+    const nip = document.getElementById("nip").value.trim();
+    if (!nip) return alert("Silakan isi NIP.");
+    const res = await fetch(scriptUrl + "?nip=" + nip);
+    const data = await res.json();
+    if (data.error) return alert(data.error);
+    ["nama", "email", "divisi", "golongan"].forEach(id => {
+      document.getElementById(id).value = data[id];
     });
-  </script>
+    document.getElementById("infoPribadi").classList.remove("hidden");
+    document.getElementById("formPelatihan").classList.remove("hidden");
+  };
+
+  document.getElementById("formPelatihan").onsubmit = async e => {
+    e.preventDefault();
+    const status = document.getElementById("status");
+    status.innerText = "⏳ Mengirim data...";
+    status.style.color = "#333";
+
+    const fd = new FormData(e.target);
+    const obj = Object.fromEntries(fd.entries());
+
+    const fileFields = ["form_pengajuan", "form_hrd", "invoice", "sertifikat", "materi", "evaluasi"];
+    for (const field of fileFields) {
+      const file = fd.get(field);
+      obj[field] = await convertFileToBase64(file);
+    }
+
+    // tambahkan data dari info pribadi
+    obj.nip = document.getElementById("nip").value;
+    obj.nama = document.getElementById("nama").value;
+    obj.email = document.getElementById("email").value;
+    obj.divisi = document.getElementById("divisi").value;
+    obj.golongan = document.getElementById("golongan").value;
+    obj.jenis = document.getElementById("jenis").value;
+
+    try {
+      const res = await fetch(scriptUrl, {
+        method: "POST",
+        body: JSON.stringify(obj),
+        headers: { "Content-Type": "application/json" }
+      });
+      const result = await res.text();
+      status.innerText = result;
+      status.style.color = "green";
+      e.target.reset();
+      document.getElementById("infoPribadi").classList.add("hidden");
+      document.getElementById("formPelatihan").classList.add("hidden");
+    } catch (err) {
+      status.innerText = "❌ Gagal mengirim data.";
+      status.style.color = "red";
+    }
+  };
+</script>
 </body>
 </html>
