@@ -12,14 +12,12 @@
       margin: 0;
       padding: 0;
     }
-
     header {
       background-color: #2c3e50;
       color: white;
       padding: 1rem;
       text-align: center;
     }
-
     main {
       max-width: 800px;
       margin: 2rem auto;
@@ -28,13 +26,11 @@
       border-radius: 8px;
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
     }
-
     label {
       display: block;
       margin-top: 1rem;
       font-weight: 600;
     }
-
     input, select, textarea, button {
       width: 100%;
       padding: 0.5rem;
@@ -43,7 +39,6 @@
       border-radius: 5px;
       font-size: 1rem;
     }
-
     button {
       background-color: #27ae60;
       color: white;
@@ -51,15 +46,12 @@
       cursor: pointer;
       margin-top: 1.5rem;
     }
-
     button:hover {
       background-color: #219150;
     }
-
     .hidden {
       display: none;
     }
-
     footer {
       text-align: center;
       padding: 1rem;
@@ -90,24 +82,27 @@
     <button type="button" id="cekNip">Cek NIP</button>
 
     <div id="infoPribadi" class="hidden">
-      <label>Nama: <input type="text" id="nama" readonly /></label>
-      <label>Email: <input type="email" id="email" readonly /></label>
-      <label>Divisi: <input type="text" id="divisi" readonly /></label>
-      <label>Golongan: <input type="text" id="golongan" readonly /></label>
+      <label>Nama: <input type="text" id="nama" name="nama" readonly /></label>
+      <label>Email: <input type="email" id="email" name="email" readonly /></label>
+      <label>Divisi: <input type="text" id="divisi" name="divisi" readonly /></label>
+      <label>Golongan: <input type="text" id="golongan" name="golongan" readonly /></label>
     </div>
 
-    <form id="formPelatihan" class="hidden">
+    <form id="formPelatihan" class="hidden" method="POST" enctype="multipart/form-data" action="https://script.google.com/macros/s/AKfycbzsPDw1SRUPx3esfSgs2LR3Y9Mh2q92_oUiuWg_s7R5riV92_PtP-uXoJBuktDNrhbmWw/exec" target="hidden_iframe">
+      <input type="hidden" name="jenis" id="hiddenJenis" />
+      <input type="hidden" name="nip" id="hiddenNip" />
+
       <div id="bagianPelatihan" class="hidden">
         <label>Judul Pelatihan: <input name="judul_pelatihan" /></label>
       </div>
-    
+
       <div id="bagianSertifikasi" class="hidden">
         <label>Judul Sertifikasi: <input name="judul_sertifikasi" /></label>
         <label>Jumlah Peserta: <input type="number" name="jumlah_peserta" /></label>
         <label>Tanggal Berlaku Sertifikat: <input type="date" name="tgl_berlaku" /></label>
         <label>Tanggal Habis Sertifikat: <input type="date" name="tgl_habis" /></label>
       </div>
-    
+
       <label>Tanggal Pelaksanaan:
         <input
           name="tanggal"
@@ -119,23 +114,25 @@
           Format: <strong>15 Juli 2025</strong> atau <strong>15 Juli 2025 s.d. 18 Juli 2025</strong>
         </small>
       </label>
+
       <label>Penyelenggara: <input name="penyelenggara" /></label>
-    
+
       <label>Upload Form Pengajuan: <input type="file" name="form_pengajuan" /></label>
       <label>Upload Form Persetujuan HRD: <input type="file" name="form_hrd" /></label>
       <label>Upload Invoice: <input type="file" name="invoice" /></label>
       <label>Upload Sertifikat: <input type="file" name="sertifikat" /></label>
       <label>Upload Materi: <input type="file" name="materi" /></label>
       <label>Upload Evaluasi: <input type="file" name="evaluasi" /></label>
-    
+
       <label id="labelJam">Total Jam: <input type="number" name="jam" /></label>
       <label>Harga Pelatihan/Sertifikasi: <input type="number" name="harga" /></label>
       <label>Nomor Rekening (Nama-Bank-Norek): <input type="text" name="rekening" /></label>
-    
+
       <button type="submit">Kirim</button>
     </form>
 
-    <div id="status" style="margin-top: 1rem;"></div>
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+    <div id="status" style="margin-top: 1rem; font-weight: bold;"></div>
   </main>
 
   <footer>
@@ -143,7 +140,7 @@
   </footer>
 
   <script>
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbzsPDw1SRUPx3esfSgs2LR3Y9Mh2q92_oUiuWg_s7R5riV92_PtP-uXoJBuktDNrhbmWw/exec"; // Ganti dengan URL Apps Script kamu
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbzsPDw1SRUPx3esfSgs2LR3Y9Mh2q92_oUiuWg_s7R5riV92_PtP-uXoJBuktDNrhbmWw/exec";
 
     document.getElementById('cekNip').onclick = async () => {
       const nip = document.getElementById('nip').value.trim();
@@ -159,6 +156,7 @@
       ['nama','email','divisi','golongan'].forEach(f => document.getElementById(f).value = res[f]);
       document.getElementById('infoPribadi').classList.remove('hidden');
       document.getElementById('formPelatihan').classList.remove('hidden');
+      document.getElementById('hiddenNip').value = nip;
     };
 
     document.getElementById('jenis').onchange = e => {
@@ -169,24 +167,29 @@
       document.getElementById('bagianPelatihan').classList.toggle('hidden', !isPelatihan);
       document.getElementById('bagianSertifikasi').classList.toggle('hidden', !isSertifikasi);
       document.getElementById('labelJam').classList.toggle('hidden', jenis === 'Sertifikasi Dana Divisi');
-      if (jenis === 'Sertifikasi Dana Divisi') {
-        document.querySelector('input[name="jam"]').value = '';
-      }
-    };
 
-    document.getElementById('formPelatihan').onsubmit = async e => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      fd.append('jenis', document.getElementById('jenis').value);
-      fd.append('nip', document.getElementById('nip').value);
-      ['nama','email','divisi','golongan'].forEach(f => fd.append(f, document.getElementById(f).value));
-
-      document.getElementById('status').innerText = '⏳ Mengirim...';
-      const res = await fetch(scriptUrl, { method: 'POST', body: fd });
-      const msg = await res.text();
-      document.getElementById('status').innerText = msg;
-      if (res.ok) e.target.reset();
+      document.getElementById('hiddenJenis').value = jenis;
     };
+    
+    // Deteksi submit berhasil dari iframe (silent form)
+    document.getElementById('hidden_iframe').addEventListener('load', function () {
+      const status = document.getElementById('status');
+      status.innerText = '✅ Form berhasil dikirim!';
+      status.style.color = 'green';
+    
+      // Reset form
+      const form = document.getElementById('formPelatihan');
+      form.reset();
+      document.getElementById('jenis').value = "";
+      document.getElementById('formPelatihan').classList.add('hidden');
+      document.getElementById('infoPribadi').classList.add('hidden');
+    });
+
+    document.getElementById('formPelatihan').addEventListener('submit', function() {
+      const status = document.getElementById('status');
+      status.innerText = '⏳ Mengirim data...';
+      status.style.color = '#333';
+    });
   </script>
 </body>
 </html>
