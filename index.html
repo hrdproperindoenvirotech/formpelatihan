@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Form Pelatihan & Sertifikasi</title>
+  <script src="https://apis.google.com/js/api.js"></script>
   <style>
     body {
       font-family: "Segoe UI", sans-serif;
@@ -57,7 +58,7 @@
     }
   </style>
 </head>
-<body>
+<body onload="onApiLoad()">
 <header>
   <h1>Form Pelatihan & Sertifikasi</h1>
 </header>
@@ -103,12 +104,42 @@
 
     <label>Penyelenggara: <input name="penyelenggara" /></label>
 
-    <label>Upload Form Pengajuan: <input type="file" name="form_pengajuan" /></label>
-    <label>Upload Form Persetujuan HRD: <input type="file" name="form_hrd" /></label>
-    <label>Upload Invoice: <input type="file" name="invoice" /></label>
-    <label>Upload Sertifikat: <input type="file" name="sertifikat" /></label>
-    <label>Upload Materi: <input type="file" name="materi" /></label>
-    <label>Upload Evaluasi: <input type="file" name="evaluasi" /></label>
+    <!-- Tombol Picker untuk masing-masing file -->
+    <label>Upload Form Pengajuan:
+      <button type="button" onclick="openPicker('form_pengajuan')">Pilih File</button>
+      <input type="hidden" name="form_pengajuan_url" id="form_pengajuan_url" />
+      <span id="form_pengajuan_label" style="font-size:0.9em;color:gray;"></span>
+    </label>
+
+    <label>Upload Form HRD:
+      <button type="button" onclick="openPicker('form_hrd')">Pilih File</button>
+      <input type="hidden" name="form_hrd_url" id="form_hrd_url" />
+      <span id="form_hrd_label" style="font-size:0.9em;color:gray;"></span>
+    </label>
+
+    <label>Upload Invoice:
+      <button type="button" onclick="openPicker('invoice')">Pilih File</button>
+      <input type="hidden" name="invoice_url" id="invoice_url" />
+      <span id="invoice_label" style="font-size:0.9em;color:gray;"></span>
+    </label>
+
+    <label>Upload Sertifikat:
+      <button type="button" onclick="openPicker('sertifikat')">Pilih File</button>
+      <input type="hidden" name="sertifikat_url" id="sertifikat_url" />
+      <span id="sertifikat_label" style="font-size:0.9em;color:gray;"></span>
+    </label>
+
+    <label>Upload Materi:
+      <button type="button" onclick="openPicker('materi')">Pilih File</button>
+      <input type="hidden" name="materi_url" id="materi_url" />
+      <span id="materi_label" style="font-size:0.9em;color:gray;"></span>
+    </label>
+
+    <label>Upload Evaluasi:
+      <button type="button" onclick="openPicker('evaluasi')">Pilih File</button>
+      <input type="hidden" name="evaluasi_url" id="evaluasi_url" />
+      <span id="evaluasi_label" style="font-size:0.9em;color:gray;"></span>
+    </label>
 
     <label id="labelJam">Total Jam Pelatihan: <input type="number" name="jam" /></label>
     <label>Harga Pelatihan/Sertifikasi: <input type="number" name="harga" /></label>
@@ -126,22 +157,42 @@
 
 <script>
   const scriptUrl = "https://script.google.com/macros/s/AKfycbzsPDw1SRUPx3esfSgs2LR3Y9Mh2q92_oUiuWg_s7R5riV92_PtP-uXoJBuktDNrhbmWw/exec";
+  const apiKey = "AIzaSyDDH-fD-_05anX59bCREudjZRAaQXQEC3E";
+  const clientId = "888559116663-f6l0865l3heehmtmbbjbi8rud2usc68i.apps.googleusercontent.com";
+  const scope = ['https://www.googleapis.com/auth/drive.file'];
+  let oauthToken;
 
-  const convertFileToBase64 = file =>
-    new Promise((resolve, reject) => {
-      if (!file) return resolve(null);
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64 = reader.result.split(",")[1];
-        resolve({
-          name: file.name,
-          mimeType: file.type,
-          data: base64
-        });
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
+  function onApiLoad() {
+    gapi.load('auth', { 'callback': onAuthApiLoad });
+    gapi.load('picker');
+  }
+
+  function onAuthApiLoad() {
+    gapi.auth.authorize({
+      client_id: clientId,
+      scope: scope,
+      immediate: false
+    }, authResult => {
+      if (authResult && !authResult.error) oauthToken = authResult.access_token;
     });
+  }
+
+  function openPicker(field) {
+    if (!oauthToken) return alert("Autentikasi gagal. Reload halaman.");
+
+    const picker = new google.picker.PickerBuilder()
+      .addView(google.picker.ViewId.DOCS)
+      .setOAuthToken(oauthToken)
+      .setDeveloperKey(apiKey)
+      .setCallback(data => {
+        if (data.action === google.picker.Action.PICKED) {
+          const file = data.docs[0];
+          document.getElementById(field + "_url").value = file.url;
+          document.getElementById(field + "_label").innerText = file.name;
+        }
+      }).build();
+    picker.setVisible(true);
+  }
 
   document.getElementById("jenis").onchange = e => {
     const jenis = e.target.value;
@@ -175,13 +226,6 @@
     const fd = new FormData(e.target);
     const obj = Object.fromEntries(fd.entries());
 
-    const fileFields = ["form_pengajuan", "form_hrd", "invoice", "sertifikat", "materi", "evaluasi"];
-    for (const field of fileFields) {
-      const file = fd.get(field);
-      obj[field] = await convertFileToBase64(file);
-    }
-
-    // tambahkan data dari info pribadi
     obj.nip = document.getElementById("nip").value;
     obj.nama = document.getElementById("nama").value;
     obj.email = document.getElementById("email").value;
